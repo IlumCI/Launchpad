@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>doubleplus.fund — Board</title>
+<meta name="description" content="Launch and fund startups as decentralized stocks. All terms on-chain; failed raises refund in full.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0e0c'/%3E%3Ctext x='4' y='24' font-family='monospace' font-size='20' fill='%238cc9a4'%3E%2B%2B%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="dp.css">
+</head>
+<body>
+<main class="shell">
+  <div class="boardhead" style="display:block; padding-bottom:6px">
+    <h1 style="font-size:clamp(24px, 3.2vw, 34px); max-width:30ch; line-height:1.15">Day-zero funding for startups
+      and research projects.</h1>
+    <p class="sub" style="max-width:78ch; margin-top:8px; font-size:13px">
+      Each raise issues a <b style="color:var(--paper)">decentralized, security-style stock</b> on Robinhood Chain —
+      a primary market for ideas, not a meme board. Terms are sworn on-chain before the first wei moves; a raise
+      that misses its target refunds every backer in full<button class="fn" popovertarget="fn-aon">?</button>;
+      graduated stocks pay ETH dividends out of real fee flow.</p>
+  </div>
+  <div id="fn-aon" popover class="note">All-or-nothing, enforced by contract: if the deadline passes below target,
+    the founder allocation burns and every backer reclaims their full spend by returning their tokens.</div>
+
+  <div class="three-col" style="margin:14px 0 18px">
+    <div class="record"><span class="k">Sworn terms</span>
+      <p class="foot" style="font-size:11.5px; color:var(--dim); margin-top:6px">Target, founder cut, vesting, taxes —
+      published on-chain before anyone commits, immutable after. The term sheet is the prospectus.</p></div>
+    <div class="record"><span class="k">All-or-nothing raises</span>
+      <p class="foot" style="font-size:11.5px; color:var(--dim); margin-top:6px">Miss the deadline and every backer is
+      refunded in full while the founder stake burns. Funding is earned, never taken.</p></div>
+    <div class="record"><span class="k">Dividends, not promises</span>
+      <p class="foot" style="font-size:11.5px; color:var(--dim); margin-top:6px">Graduated stocks pay ETH dividends
+      from trading fees every 15 minutes; liquidity is locked and market-made on both sides by the protocol.</p></div>
+  </div>
+
+  <a class="king" id="king" href="#" style="position:relative">
+    <span class="monogram lg" id="king-mono">?</span>
+    <span>
+      <span class="mono" style="font-size:9.5px; letter-spacing:.18em; color:var(--red)">ABOUT TO GRADUATE</span>
+      <h3 id="king-name">—</h3>
+      <span class="meta" id="king-meta">—</span>
+      <div class="curvebar" id="king-bar" style="max-width:420px"><i></i></div>
+    </span>
+    <span class="num" id="king-num">—</span>
+  </a>
+
+  <div class="chips" id="chips">
+    <button data-f="all" class="on">All</button>
+    <button data-f="startup">Startups</button>
+    <button data-f="research">Research</button>
+    <button data-f="raising">Raising</button>
+    <button data-f="soon">About to graduate</button>
+    <button data-f="graduated">Trading</button>
+    <button data-f="failed">Failed</button>
+    <span class="sep"></span>
+    <button data-s="new" class="on">Newest</button>
+    <button data-s="mcap">Market cap</button>
+    <button data-s="funded">% funded</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="chit" style="margin-top:22px; display:flex; flex-wrap:wrap; gap:8px 26px; align-items:baseline">
+    <b>WEEKLY REWARDS — EPOCH 3:</b>
+    <span class="mono">41.208 ETH volume · 0.412 ETH distributed — 3 buybacks · 5 trader rebates · 2 LP rewards</span>
+    <a href="flywheel.html">all epochs →</a>
+  </div>
+</main>
+
+<script src="dp.js"></script>
+<script>
+DP.page({ current: "index.html" });
+
+(function () {
+  var monoCls = ["", "m2", "m3", "m4"];
+  var filter = "all", sort = "new";
+
+  function badge(v) {
+    var p = DP.phaseOf(v);
+    if (p === "raising" && DP.pct(v) >= 85) return '<span class="badge soon">graduating soon</span>';
+    if (p === "raising") return '<span class="badge live">live</span>';
+    if (p === "funded") return '<span class="badge soon">funded</span>';
+    if (p === "graduated") return '<span class="badge grad">trading</span>';
+    return '<span class="badge dead">failed</span>';
+  }
+
+  function card(v, i) {
+    var p = DP.phaseOf(v), inner;
+    if (p === "graduated") {
+      inner = '<div class="facts"><span class="mc' + (v.change >= 0 ? "" : " dn") + '">mcap ' + DP.mc(v) +
+        " " + (v.change >= 0 ? "+" : "") + v.change.toFixed(1) + "%</span><span>vol " + v.vol24.toFixed(1) + " ETH</span></div>" +
+        '<div style="margin-top:6px">' + DP.spark(v.seed, 250, 26, v.change >= 0) + "</div>";
+    } else if (p === "failed") {
+      inner = '<div class="curvebar dead" style="--pct:' + DP.pct(v) + '%"><i></i></div>' +
+        '<div class="curvelabel"><span>closed at ' + DP.pct(v) + "%</span><span>refunds open</span></div>";
+    } else {
+      inner = '<div class="curvebar' + (p === "funded" ? " done" : "") + '" style="--pct:' + DP.pct(v) + '%"><i></i></div>' +
+        '<div class="curvelabel"><span><b>' + DP.pct(v) + "%</b> to graduation</span><span>" +
+        v.raised.toFixed(2) + " / " + v.target.toFixed(1) + " ETH</span></div>";
+    }
+    return '<a class="tcard" data-no="' + v.no + '" href="venture.html?f=' + v.no + '">' +
+      '<div class="row1"><span class="monogram ' + monoCls[i % 4] + '">' + v.name[0] + "</span>" +
+      "<div><h3>" + DP.esc(v.name) + '</h3><span class="tick">$' + v.sym + " · " + DP.esc(v.cat) + "</span></div>" +
+      '<span style="margin-left:auto; align-self:flex-start">' + badge(v) + "</span></div>" +
+      '<p class="pitch">' + DP.esc(v.pitch) + "</p>" + inner +
+      '<div class="prov"><span>by <b>' + DP.esc(v.by) + "</b> · " + DP.age(v) + " ago</span><span>" +
+      v.holders + " holders · " + DP.thread(v).length + (DP.thread(v).length === 1 ? " reply" : " replies") + "</span></div></a>";
+  }
+
+  function mcNum(v) { return parseFloat(DP.mc(v).replace(/[$K]/g, "")) * (DP.mc(v).indexOf("K") > 0 ? 1 : 0.001); }
+
+  function draw() {
+    var list = DP.VENTURES.slice(), out = "", i, v;
+    if (filter === "startup") list = list.filter(function (v) { return v.kind === "startup"; });
+    if (filter === "research") list = list.filter(function (v) { return v.kind === "research"; });
+    if (filter === "raising") list = list.filter(function (v) { return v.phase === "raising"; });
+    if (filter === "soon") list = list.filter(function (v) { return v.phase === "raising" && DP.pct(v) >= 85; });
+    if (filter === "graduated") list = list.filter(function (v) { return v.phase === "graduated"; });
+    if (filter === "failed") list = list.filter(function (v) { return v.phase === "failed"; });
+    if (sort === "mcap") list.sort(function (a, b) { return mcNum(b) - mcNum(a); });
+    if (sort === "funded") list.sort(function (a, b) { return DP.pct(b) - DP.pct(a); });
+    for (i = 0; i < list.length; i++) out += card(list[i], DP.VENTURES.indexOf(list[i]));
+    document.getElementById("grid").innerHTML = out || '<p class="agate">nothing here.</p>';
+  }
+
+  /* featured slot: the raise closest to graduation */
+  var king = null, i, v;
+  for (i = 0; i < DP.VENTURES.length; i++) {
+    v = DP.VENTURES[i];
+    if (v.phase === "raising" && (!king || DP.pct(v) > DP.pct(king))) king = v;
+  }
+  if (king) {
+    var K = document.getElementById("king");
+    K.href = "venture.html?f=" + king.no;
+    document.getElementById("king-mono").textContent = king.name[0];
+    document.getElementById("king-name").textContent = king.name + "  ·  $" + king.sym;
+    document.getElementById("king-meta").textContent = king.pitch + "  —  by " + king.by + " · " + king.holders + " backers · " + king.deadline + " left";
+    document.getElementById("king-bar").style.setProperty("--pct", DP.pct(king) + "%");
+    document.getElementById("king-num").innerHTML = '<b style="font-size:20px; color:var(--up)">' + DP.pct(king) + "%</b><br><span style=\"color:var(--faint); font-size:10.5px\">" + king.raised.toFixed(2) + " / " + king.target.toFixed(1) + " ETH</span>";
+  }
+
+  /* chips */
+  var chips = document.querySelectorAll("#chips button");
+  for (i = 0; i < chips.length; i++) chips[i].addEventListener("click", function () {
+    var kind = this.dataset.f ? "f" : "s";
+    var group = document.querySelectorAll("#chips button[data-" + kind + "]");
+    for (var j = 0; j < group.length; j++) group[j].classList.remove("on");
+    this.classList.add("on");
+    if (kind === "f") filter = this.dataset.f; else sort = this.dataset.s;
+    draw();
+  });
+
+  draw();
+
+  /* the board never sits still: fake a trade bump every few seconds */
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    setInterval(function () {
+      var cards = document.querySelectorAll(".tcard");
+      if (!cards.length) return;
+      var c = cards[Math.floor(Math.random() * cards.length)];
+      c.classList.remove("bump"); void c.offsetWidth; c.classList.add("bump");
+    }, 4000);
+  }
+})();
+</script>
+</body>
+</html>

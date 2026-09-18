@@ -14,6 +14,12 @@ const FLAVOR_META: Record<string, { title: string; description: string; icon?: s
     description:
       "hammr. dutch-auction launchpad on Robinhood Chain: coins start at 10x and fall for one hour, then the hammer drops, liquidity locks, and holders earn the pair token on every trade.",
   },
+  venture: {
+    title: "doubleplus — back an idea, own a stake in its market",
+    description:
+      "Back startups and research projects at day zero on Robinhood Chain. Every raise publishes its terms on-chain before any money moves, returns every wei on the curve if it misses target, and pays holders a share of every trade in ETH.",
+    ogImage: "/doubleplus-card.png",
+  },
   steadypads: {
     title: "steadypads | the stable launchpad",
     description:

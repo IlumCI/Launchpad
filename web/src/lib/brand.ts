@@ -59,6 +59,23 @@ const FLAVORS: Record<string, Brand> = {
       "basedstonk.fun. Launch a memecoin on Base paired with a tokenized stock. Every trade rewards holders in that stock: hold the coin, earn NVIDIA, Apple, Google and more.",
     title: "basedstonk | launch a coin, earn real stock",
   },
+  // The startup-funding launchpad on Robinhood Chain. Founders open an
+  // all-or-nothing bonding-curve raise with an on-chain term sheet; hitting
+  // the target pays the founder their cut and graduates the coin into a locked
+  // dividend-paying pool. The flavor key stays "venture" (build wiring + CSS
+  // scope); the brand is doubleplus — Orwell's newspeak "doubleplusgood".
+  venture: {
+    name: "doubleplus",
+    tld: ".fund",
+    domain: "doubleplus.fund",
+    url: "https://doubleplus.fund",
+    twitter: "https://x.com/",
+    twitterHandle: "",
+    tagline: "day-zero funding for startups and research projects",
+    description:
+      "Back startups and research projects at day zero on Robinhood Chain. Every raise publishes its terms on-chain before any money moves, returns every wei on the curve if it misses target, and pays holders a share of every trade in ETH.",
+    title: "doubleplus — back an idea, own a stake in its market",
+  },
   steadypads: {
     name: "steadypads",
     tld: ".fun",

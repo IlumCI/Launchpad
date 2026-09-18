@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>doubleplus.fund — Docs</title>
+<meta name="description" content="How doubleplus works: launch, fund, graduate, earn, and what happens when a raise fails.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fce8ca'/%3E%3Ctext x='4' y='24' font-family='monospace' font-size='20' fill='%234f2b60'%3E%2B%2B%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="dp.css">
+</head>
+<body>
+<main class="shell">
+  <div class="page-head">
+    <h1 class="page-title">How it works</h1>
+    <div style="display:flex; flex-wrap:wrap; gap:10px 26px; align-items:baseline; justify-content:space-between">
+      <p style="max-width:56ch; margin:6px 0 0">Launch and fund a startup as a decentralized stock-style token.
+      Five steps, all on-chain.</p>
+      <label class="mono" style="font-size:11px">TEXT SIZE
+        <select id="density"><option value="standard">standard</option><option value="compact">compact</option><option value="loupe">large</option></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="doc-grid" style="margin-top:14px">
+    <div class="dropcap" id="prose">
+      <h2 style="font-size:22px; margin:18px 0 8px">1 · Launch.</h2>
+      <p>One transaction deploys your token and opens a funding round on a rising price
+      curve<button class="fn" popovertarget="fn-curve">?</button>: the earlier a backer buys, the cheaper the entry.
+      You set the full terms up front — target, your cut of the raise (up to 30%), your vested allocation (up to 15%,
+      unlocking linearly only after success), the deadline, and the per-wallet cap. Terms are public before anyone
+      buys and locked after deployment.</p>
+
+      <h2 style="font-size:22px; margin:26px 0 8px">2 · Fund.</h2>
+      <p>Backers buy along the curve in plain ETH. Pricing is the exact integral of the curve, so splitting orders or
+      sniping the first block gains nothing, and the per-wallet cap keeps any single buyer from cornering the round.</p>
+
+      <h2 style="font-size:22px; margin:26px 0 8px">3 · Graduate.</h2>
+      <p>When the target is reached, anyone can trigger graduation: the founder's declared cut of the raise pays out
+      as funding, and everything else — remaining supply and remaining ETH — becomes protocol-managed liquidity in a
+      Uniswap V4 pool. Trading starts immediately.</p>
+
+      <h2 style="font-size:22px; margin:26px 0 8px">4 · Earn.</h2>
+      <p>The fee policy set at launch runs on-chain: separate buy and sell taxes (0–4% each), split in any proportion
+      across four destinations — the dev wallet; ETH dividends pushed to every holder<button class="fn" popovertarget="fn-div">?</button>;
+      auto-liquidity locked beside the price; and a market-making engine that quotes both sides — a tight bid wall
+      under the price and an ask band above it, re-centered automatically when the market moves. Trades in the first
+      seconds after graduation pay a decaying premium that also funds the walls. The protocol adds up to 1% per trade,
+      and pays 20% of that to referrers.</p>
+
+      <h2 style="font-size:22px; margin:26px 0 8px">5 · Compound.</h2>
+      <p>Share any page with your <span class="mono">?ref=</span> link: a wallet that trades through it pays you 20%
+      of the protocol fee on every trade it ever makes, settled in the same transaction. Weekly rewards return a slice
+      of protocol revenue as buyback-burns, trader rebates, and LP rewards, each epoch published as a verifiable
+      manifest<button class="fn" popovertarget="fn-manifest">?</button>. Dividends deliver every 15 minutes, raises
+      graduate themselves at target, and refunds open themselves at the deadline — no admin in the loop.</p>
+
+      <h2 style="font-size:22px; margin:26px 0 8px">6 · If a raise fails.</h2>
+      <p>Miss the deadline and the round fails safe: the founder allocation burns, and every backer reclaims their
+      full spend by returning their tokens. All or nothing.</p>
+
+      <details class="dossier" style="margin-top:30px">
+        <summary>Risks and disclaimers</summary>
+        <div class="body" style="font-size:13px">
+          These are open, freely-transferable tokens whose economics resemble equity — a funded raise, a vested
+          founder stake, dividend-paying trading fees. They are not registered securities, carry no legal claim on any
+          company, and the contracts are unaudited. Liquidity is protocol-managed, not burned. The weekly reward split
+          is treasury policy v1: transparent in the manifests, not yet contract-enforced. Back only what you can
+          afford to lose.
+        </div>
+      </details>
+      <details class="dossier">
+        <summary>Quick start for founders</summary>
+        <div class="body" style="font-size:13px">
+          Go to <a href="launch.html">Launch a token</a>. Set taxes you would accept as a buyer, balance the fee split
+          to 100%, set a target you can actually reach, and deploy. Your token address ends in
+          <span class="mono">0x4663</span>, mined in your browser before you sign.
+        </div>
+      </details>
+    </div>
+
+    <aside>
+      <p class="mono" style="font-size:10.5px; letter-spacing:.1em">KEY NUMBERS</p>
+      <p>Buy/sell tax: 0–4% each, founder-set, locked at launch.</p>
+      <p>Protocol fee: up to 1% per trade; 20% of it to referrers.</p>
+      <p>Founder cut: up to 30% of the raise, paid only on graduation.</p>
+      <p>Founder supply: up to 15%, vesting linearly; burns if the raise fails.</p>
+      <p>Dividends: pushed automatically every 15 minutes.</p>
+      <p>Failed raises: 100% refunds, no deadline.</p>
+    </aside>
+  </div>
+
+  <div id="fn-curve" popover class="note">A linear bonding curve priced by its closed-form integral: path-independent,
+    so a thousand small buys cost exactly what one large buy costs.</div>
+  <div id="fn-div" popover class="note">Dividends are converted to the pool's pair currency and pushed to every holder
+    on a 15-minute schedule. Holding is the only requirement.</div>
+  <div id="fn-manifest" popover class="note">Manifests are JSON, one per epoch, listing volumes, burns, rebates, LP
+    attributions, and the transaction hashes to verify each line.</div>
+</main>
+
+<script src="dp.js"></script>
+<script>
+DP.page({ current: "handbook.html" });
+document.getElementById("density").addEventListener("input", function () {
+  var p = document.getElementById("prose");
+  var v = this.value;
+  p.style.fontSize = v === "compact" ? "13px" : v === "loupe" ? "17.5px" : "";
+  p.style.lineHeight = v === "compact" ? "1.35" : v === "loupe" ? "1.62" : "";
+});
+</script>
+</body>
+</html>
